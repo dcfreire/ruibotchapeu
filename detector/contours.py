@@ -13,3 +13,23 @@ def order_points(points):
     theta = np.arctan2(shifted[:, 0], shifted[:, 1])
     ind = np.argsort(theta)
     return points[ind]
+
+def get_homography(frame, size=(500, 1000, 3)):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(gray, (5,5), 1)
+    canny = cv2.Canny(blur, 50, 150)
+    kernel = np.ones((5,5), np.uint8)
+    diler = cv2.morphologyEx(canny, cv2.MORPH_CLOSE, kernel)
+    pts_src, c = get_contours(diler)
+    pts_dst = np.array(
+                   [
+                    [0,0],
+                    [size[0] - 1, 0],
+                    [size[0] - 1, size[1] -1],
+                    [0, size[1] - 1 ]
+                    ], dtype=float
+                   )
+    pts_src = order_points(pts_src[:, 0])
+    pts_dst = order_points(pts_dst)
+    h, _ = cv2.findHomography(pts_src, pts_dst)
+    return h
