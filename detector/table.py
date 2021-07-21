@@ -66,7 +66,9 @@ class Table:
 
 
 
-    def _get_unique_hsv(self, frame):
+    def _get_common_hsv(self, frame):
+        # Grab the most abundant unique color
+
         h, s, v = cv2.split(
             cv2.cvtColor(
                 cv2.warpPerspective(frame, self.homography, self.size),
@@ -79,7 +81,6 @@ class Table:
         unique_s, counts_s = np.unique(s, return_counts=True)
         unique_v, counts_v = np.unique(v, return_counts=True)
 
-        # sort through and grab the most abundant unique color
         big_s, big_h, big_v = 0, 0, 0
         biggest_s, biggest_h, biggest_v = -1, -1, -1
 
@@ -101,7 +102,7 @@ class Table:
         return big_h, big_s, big_v
 
     def _get_cloth_range(self, frame):
-        big_h, big_s, big_v = self._get_unique_hsv(frame)
+        big_h, big_s, big_v = self._get_common_hsv(frame)
 
         # get the color mask
         marginh, margin, marginv = 10, 80, 150
