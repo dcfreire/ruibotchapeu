@@ -19,10 +19,10 @@ class Table:
             ctrs = self._get_ball_contours(mask)
             for c in ctrs:
                 x, y, w, z = cv2.boundingRect(c)
-                x -= 10
-                y -= 10
-                w += 15
-                z += 15
+                x -= 6
+                y -= 6
+                w += 10
+                z += 10
                 cv2.rectangle(frame,(x,y),(x+w,y+z),(0,0,255),2)
 
             cv2.imshow('frame',frame)
