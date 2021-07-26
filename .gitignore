@@ -135,4 +135,10 @@ dmypy.json
 .pytype/
 
 # Cython debug symbols
+<<<<<<< HEAD
 cython_debug/
+=======
+cython_debug/
+.vscode
+output.mp4
+>>>>>>> staging
