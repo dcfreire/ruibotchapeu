@@ -8,6 +8,7 @@ RuiBot is an, *under development*, autonomous snooker referee. Using video frame
 - [x] Ball Detection
 - [x] Ball Tracking
 - [x] [Collision Detection](#collision)
+- [ ] Color Detection
 - [ ] Pot Detection
 - [ ] Score Pots
 - [ ] Detect Fouls
