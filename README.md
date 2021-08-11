@@ -1,6 +1,6 @@
 # RuiBot Chapeu
 
-RuiBot is an, *under development*, autonomous snooker referee. Using video frames from only one camera RuiBot should be able to automatically compute an homography such that it ignores everyghing that is not the table. It detects and track the snooker balls and their collisions. Checking which balls were potted, RuiBot should be able to score plays and detect fouls.
+RuiBot is an autonomous snooker referee. Using video frames from a static camera RuiBot should be able to: Automatically compute an homography such that it ignores everyghing that is not the table, detect and track the snooker balls and their collisions, check which balls were potted, score plays and detect fouls.
 
 ## Progress
 
