@@ -136,7 +136,7 @@ class Table:
 
         # Inverts the mask
         _, mask_inv = cv2.threshold(mask_closing, 5, 255, cv2.THRESH_BINARY_INV)
-        mask_inv = cv2.erode(mask, np.ones((5, 5), np.uint8), iterations=1)
+        mask_inv = cv2.erode(mask_inv, np.ones((5, 5), np.uint8), iterations=1)
 
         return mask_inv
 
