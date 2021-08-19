@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 from sklearn.cluster import MiniBatchKMeans
-from utils.video import saveVideo
 
 class Table:
     def __init__(self, video_path):
@@ -19,11 +18,13 @@ class Table:
             if not ret:
                 break
             frame = cv2.warpPerspective(frame, self.homography, self.size)
+            out = frame.copy()
             mask = self._get_cloth_mask(frame)
 
             ctrs = self._get_ball_contours(mask)
 
             for c in ctrs:
+                font = cv2.FONT_HERSHEY_SIMPLEX
                 color = self.get_common_color(frame, c)
                 x, y, w, z = cv2.boundingRect(c)
                 x -= 6
@@ -31,11 +32,11 @@ class Table:
                 w += 10
                 z += 10
 
-                cv2.rectangle(frame, (x, y), (x + w, y + z), (int(color[0]), int(color[1]), int(color[2])), 2)
+                cv2.putText(out, f'{color}' , (x, y), font, 0.5, (int(color[0]), int(color[1]), int(color[2])), 2, cv2.LINE_AA)
+                cv2.rectangle(out, (x, y), (x + w, y + z), (int(color[0]), int(color[1]), int(color[2])), 2)
 
-
-            frames.append(frame)
-            cv2.imshow("frame", frame)
+            frames.append(out)
+            cv2.imshow("RuiBot", out)
             i += 1
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
@@ -156,10 +157,13 @@ class Table:
         cv2.drawContours(mask, [c], -1, 255, thickness=cv2.FILLED)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
         frame = frame[mask > 0]
-        clt = MiniBatchKMeans(n_clusters=2)
+        clt = MiniBatchKMeans(n_clusters=1)
         clt.fit_predict(frame)
         hist = Table.centroid_histogram(clt)
-        return Table.lab2bgr(max(hist, key=lambda x: x[1])[0])
+
+        color = max(hist, key=lambda x: x[1])[0]
+
+        return Table.lab2bgr(color)
 
     @staticmethod
     def lab2bgr(lab):
