@@ -138,3 +138,6 @@ dmypy.json
 cython_debug/
 .vscode
 output.mp4
+contours/
+frames/
+colors/

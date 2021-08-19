@@ -8,7 +8,8 @@ RuiBot is an autonomous snooker referee. Using video frames from a static camera
 - [x] Ball Detection
 - [x] Ball Tracking
 - [x] [Collision Detection](#collision)
-- [ ] Color Detection
+- [x] [Color Detection](#color-detection)
+- [ ] Color Labeling
 - [ ] Pot Detection
 - [ ] Score Pots
 - [ ] Detect Fouls
@@ -17,10 +18,16 @@ RuiBot is an autonomous snooker referee. Using video frames from a static camera
 
 ### Homography
 
-![homography](./misc/homography.gif)
+![homography](./images/homography.gif)
 
 ### Collision
 
-<p align="center"> 
-    <img src="./misc/collision.gif" width="396" height="500"> 
+<p align="center">
+    <img src="./images/collision.gif" width="396" height="500">
+</p>
+
+### Color Detection
+
+<p align="center">
+    <img src="./images/colors.gif" width="396" height="500">
 </p>
