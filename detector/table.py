@@ -1,18 +1,32 @@
 import cv2
 import numpy as np
 from sklearn.cluster import MiniBatchKMeans
+from tensorflow import keras
 
 class Table:
+    color_codes = {
+        0: "White",
+        1: "Red",
+        2: "Yellow",
+        3: "Green",
+        4: "Brown",
+        5: "Blue",
+        6: "Pink",
+        7: "Black",
+    }
+
     def __init__(self, video_path):
         self.cap = cv2.VideoCapture(video_path)
         self.size = (800, 1000)
         frame = self.cap.read()[1]
         self.homography = self.get_homography(frame, self.size)
         self.lower, self.upper = self._get_cloth_range(frame)
+        self.color_classifier = keras.models.load_model("color_classifier.h5")
 
     def start(self):
         i = 0
         frames = []
+
         while True:
             ret, frame = self.cap.read()
             if not ret:
@@ -26,13 +40,15 @@ class Table:
             for c in ctrs:
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 color = self.get_common_color(frame, c)
+                color_pred = np.argmax(self.color_classifier.predict(np.array([[color[2], color[1], color[0]]])), axis=1)[0]
+                color_name = self.color_codes[color_pred]
+
                 x, y, w, z = cv2.boundingRect(c)
                 x -= 6
                 y -= 6
                 w += 10
                 z += 10
-
-                cv2.putText(out, f'{color}' , (x, y), font, 0.5, (int(color[0]), int(color[1]), int(color[2])), 2, cv2.LINE_AA)
+                cv2.putText(out, f'{color_name}' , (x, y-5), font, 0.5, (int(color[0]), int(color[1]), int(color[2])), 2, cv2.LINE_AA)
                 cv2.rectangle(out, (x, y), (x + w, y + z), (int(color[0]), int(color[1]), int(color[2])), 2)
 
             frames.append(out)
