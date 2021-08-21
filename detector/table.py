@@ -43,6 +43,9 @@ class Table:
                 color_pred = np.argmax(self.color_classifier.predict(np.array([[color[2], color[1], color[0]]])), axis=1)[0]
                 color_name = self.color_codes[color_pred]
 
+                # Hardcoded fix for the red ball getting brown when moving
+                if color_name == "Brown" and color[1] < 90:
+                    color_name = "Red"
                 x, y, w, z = cv2.boundingRect(c)
                 x -= 6
                 y -= 6
