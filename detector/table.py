@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 from sklearn.cluster import MiniBatchKMeans
-from tensorflow import keras
+from tensorflow import keras, lite
+
 
 class Table:
     color_codes = {
@@ -21,7 +22,21 @@ class Table:
         frame = self.cap.read()[1]
         self.homography = self.get_homography(frame, self.size)
         self.lower, self.upper = self._get_cloth_range(frame)
-        self.color_classifier = keras.models.load_model("color_classifier.h5")
+        self.interpreter = lite.Interpreter(model_path="color_classifier.tflite")
+        self.interpreter.allocate_tensors()
+
+    def predict_color(self, color):
+        input_index = self.interpreter.get_input_details()[0]["index"]
+        output_index = self.interpreter.get_output_details()[0]["index"]
+        self.interpreter.set_tensor(input_index, np.array([[color[2], color[1], color[0]]], np.float32))
+        self.interpreter.invoke()
+        output = self.interpreter.tensor(output_index)
+        color_pred = np.argmax(output()[0])
+        color_name = self.color_codes[color_pred]
+        # Hardcoded fix for the red ball getting brown when moving
+        if color_name == "Brown" and color[1] < 90:
+            color_name = "Red"
+        return color_name
 
     def start(self):
         i = 0
@@ -40,12 +55,8 @@ class Table:
             for c in ctrs:
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 color = self.get_common_color(frame, c)
-                color_pred = np.argmax(self.color_classifier.predict(np.array([[color[2], color[1], color[0]]])), axis=1)[0]
-                color_name = self.color_codes[color_pred]
+                color_name = self.predict_color(color)
 
-                # Hardcoded fix for the red ball getting brown when moving
-                if color_name == "Brown" and color[1] < 90:
-                    color_name = "Red"
                 x, y, w, z = cv2.boundingRect(c)
                 x -= 6
                 y -= 6
